@@ -1,3 +1,4 @@
+import { AuthServices } from 'src/auth/services/auth.service';
 import { ErrrorFilter } from './../../utils/errorFilter';
 import { UpdateUserDto } from './../dto/UpdateUserDto';
 import { createUserDto } from './../dto/userDto.dto';
@@ -22,8 +23,8 @@ import {
 export class UserController {
   constructor(
     @Inject(UsersService) private readonly userServices: UsersService,
+    @Inject(AuthServices) private readonly authServices: AuthServices,
   ) {}
-
   @Get()
   async getAllusers() {
     try {
@@ -31,7 +32,12 @@ export class UserController {
       if (!users || !users.length || users.length <= 0) {
         throw new NotFoundException();
       }
-      return users;
+
+      const userPropertyToSend = users.map(function (user) {
+        const { password, ...result } = user;
+        return result;
+      });
+      return userPropertyToSend;
     } catch (err) {
       throw err;
     }
@@ -64,13 +70,23 @@ export class UserController {
         throw new HttpException(message, HttpStatus.CONFLICT);
       }
 
-      const user = await this.userServices.create(body);
-      console.log('here==================');
+      // hashing password
+      const hashPassword = await this.authServices.hashPassword(body.password);
+
+      const user = await this.userServices.create({
+        ...body,
+        password: hashPassword,
+      });
+
       if (!user) {
         throw new BadRequestException();
       }
 
-      return user;
+      // extract the password
+      const { password, ...result } = user;
+      console.log(password, result);
+
+      return result;
     } catch (err) {
       throw err;
     }

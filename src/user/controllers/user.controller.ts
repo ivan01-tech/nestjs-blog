@@ -3,6 +3,7 @@ import { ErrrorFilter } from './../../utils/errorFilter';
 import { UpdateUserDto } from './../dto/UpdateUserDto';
 import { createUserDto } from './../dto/userDto.dto';
 import { UsersService } from './../service/user.service';
+
 import {
   BadRequestException,
   Body,
@@ -18,6 +19,7 @@ import {
   Patch,
   Post,
 } from '@nestjs/common';
+import { SignInDto } from 'src/user/dto/signInDto';
 
 @Controller({ path: 'users' })
 export class UserController {
@@ -25,6 +27,12 @@ export class UserController {
     @Inject(UsersService) private readonly userServices: UsersService,
     @Inject(AuthServices) private readonly authServices: AuthServices,
   ) {}
+  // make sure to hash the password before using the findOne methode
+  /**
+   * @desc get all users
+   * @route GET /users
+   * @access Private
+   */
   @Get()
   async getAllusers() {
     try {
@@ -93,7 +101,10 @@ export class UserController {
   }
 
   @Patch(':id')
-  async update(@Param('id') id: number, @Body() userOpt: UpdateUserDto) {
+  async update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() userOpt: UpdateUserDto,
+  ) {
     try {
       const user = await this.userServices.findOne({ id });
       if (!user) throw new NotFoundException();
@@ -103,13 +114,29 @@ export class UserController {
 
         if (duplicate && duplicate.id !== user.id) {
           throw new HttpException(
-            `user with ${duplicate.id} already exist !`,
+            `user with id ${duplicate.id} already exist !`,
             HttpStatus.CONFLICT,
           );
         }
+
+        if (userOpt.password) {
+          const isSame = await this.authServices.comparePassword(
+            userOpt.password,
+            duplicate.password,
+          );
+
+          if (!isSame)
+            throw new HttpException(
+              'password does not match',
+              HttpStatus.CONFLICT,
+            );
+        }
       }
 
-      return await this.userServices.updateOne(userOpt);
+      const newUser = await await this.userServices.updateOne(userOpt);
+      const { password, emailToLowecase, ...rest } = newUser;
+
+      return rest;
     } catch (err) {
       throw err;
     }
@@ -122,9 +149,16 @@ export class UserController {
       if (!user) {
         throw new ErrrorFilter("user with the current id wasn't found", 404);
       }
-      return this.userServices.deleteOne(id);
+      await this.userServices.deleteOne(id);
+
+      return { message: `the user with id ${id} was deleted successfully !` };
     } catch (err) {
       throw err;
     }
+  }
+
+  @Post('login')
+  async login(@Body() body: SignInDto) {
+    return await this.userServices.login(body);
   }
 }

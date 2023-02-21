@@ -2,9 +2,9 @@ import { UpdateUserDto } from './../dto/UpdateUserDto';
 import { UserInterface } from './../models/userType';
 import { createUserDto } from './../dto/userDto.dto';
 import { Repository } from 'typeorm';
-import { UserEntity } from './../models/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable } from '@nestjs/common';
+import { UserEntity } from 'src/user/models/user.entity';
 
 @Injectable()
 export class UsersService {
@@ -14,7 +14,7 @@ export class UsersService {
   ) {}
 
   async create(createuser: createUserDto): Promise<UserInterface> {
-    return this.userRepository.create(createuser);
+    return this.userRepository.save(createuser);
   }
 
   async findAll(): Promise<UserInterface[]> {

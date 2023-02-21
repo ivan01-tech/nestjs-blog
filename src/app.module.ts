@@ -1,3 +1,5 @@
+import { UserEntity } from 'src/user/models/user.entity';
+import { UsersModule } from './user/user.module';
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -17,9 +19,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       password: 'adminblog123',
       database: 'nest_blog_db',
       host: 'localhost',
-      entities: [],
+      entities: [UserEntity],
       synchronize: true,
     }),
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService],

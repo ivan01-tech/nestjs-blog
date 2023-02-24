@@ -1,4 +1,8 @@
-export const matchRoles = (roles: number[], userRoles: number[]) =>
-  roles
-    .map((value) => userRoles.find((userRole) => value == userRole))
+export const matchRoles = (requiredRoles: string[], userRoles: string[]) =>
+  requiredRoles
+    .map((value) => {
+      const v = userRoles.find((userRole) => value === userRole);
+      console.log('first : ', v);
+      return v;
+    })
     .some(Boolean);

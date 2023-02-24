@@ -1,3 +1,4 @@
+import { UserRoles } from './../../utils/userRoles';
 import { BeforeInsert, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('users')
@@ -11,15 +12,21 @@ export class UserEntity {
   @Column({ unique: true })
   username?: string;
 
+  @BeforeInsert()
+  emailToLowecase(): void {
+    this.email = this.email.toLowerCase();
+    this.name = this.name.trim();
+    console.log(Object.values(UserRoles));
+  }
+
   @Column()
   password: string;
-
   @Column({ unique: true })
   email: string;
 
-  @BeforeInsert()
-  emailToLowecase() {
-    this.email = this.email.toLowerCase();
-    this.name = this.name.trim();
-  }
+  @Column({
+    array: true,
+    default: ['user'],
+  })
+  roles: string[];
 }

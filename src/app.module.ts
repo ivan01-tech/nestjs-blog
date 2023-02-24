@@ -1,3 +1,4 @@
+import { AuthModule } from './auth/auth.module';
 import { UserEntity } from 'src/user/models/user.entity';
 import { UsersModule } from './user/user.module';
 import { Module } from '@nestjs/common';
@@ -22,6 +23,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       synchronize: true,
     }),
     UsersModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

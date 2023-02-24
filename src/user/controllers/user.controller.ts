@@ -1,3 +1,4 @@
+import { UserRoles } from './../../utils/userRoles';
 import { AuthServices } from 'src/auth/services/auth.service';
 import { ErrrorFilter } from './../../utils/errorFilter';
 import { UpdateUserDto } from './../dto/UpdateUserDto';
@@ -21,14 +22,13 @@ import {
   UseGuards,
 } from '@nestjs/common';
 
-import { SignInDto } from 'src/user/dto/signInDto';
-import { userRoles } from 'src/utils/userRoles';
-import { UserRolesDecorator } from 'src/user/decorators/user.decorator';
-import { JwtStrategy } from 'src/auth/guards/jwt.strategy';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { JWTAuthGuard } from 'src/auth/guards/JwtGuards.guard';
+import { hasRoles } from 'src/user/decorators/user.decorator';
 
 @Controller({ path: 'users' })
+// @hasRoles(UserRoles.admin, UserRoles.editor)
+// @UseGuards(JWTAuthGuard, RolesGuard)
 export class UserController {
   constructor(
     @Inject(UsersService) private readonly userServices: UsersService,
@@ -42,8 +42,6 @@ export class UserController {
    * @access public
    */
   @Get()
-  @UseGuards(JWTAuthGuard, RolesGuard)
-  @UserRolesDecorator(userRoles.admin)
   async getAllusers() {
     try {
       const users = await this.userServices.findAll(); //>
@@ -154,7 +152,7 @@ export class UserController {
         }
       }
 
-      const newUser = await await this.userServices.updateOne(userOpt);
+      const newUser = await this.userServices.updateOne(userOpt);
       const { password, emailToLowecase, ...rest } = newUser;
 
       return rest;
@@ -182,15 +180,5 @@ export class UserController {
     } catch (err) {
       throw err;
     }
-  }
-
-  /**
-   * @desc to authenticate  a user
-   * @route POST /users/login
-   * @access public
-   */
-  @Post('login')
-  async login(@Body() body: SignInDto) {
-    return await this.userServices.login(body);
   }
 }

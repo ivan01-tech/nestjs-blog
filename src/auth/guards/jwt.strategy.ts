@@ -1,3 +1,4 @@
+import { UserInterface } from '../../user/models/userType';
 import { jwtConstant } from '../constant';
 import { ConfigService } from '@nestjs/config';
 import { ExtractJwt, Strategy } from 'passport-jwt';
@@ -14,8 +15,8 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(payload: any) {
-    console.log('payload : ', payload);
+  async validate(payload: { user: UserInterface }) {
+    console.log('payload111 : ', payload);
     return { user: payload.user };
   }
 }

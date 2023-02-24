@@ -18,8 +18,15 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  UseGuards,
 } from '@nestjs/common';
+
 import { SignInDto } from 'src/user/dto/signInDto';
+import { userRoles } from 'src/utils/userRoles';
+import { UserRolesDecorator } from 'src/user/decorators/user.decorator';
+import { JwtStrategy } from 'src/auth/guards/jwt.strategy';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
+import { JWTAuthGuard } from 'src/auth/guards/JwtGuards.guard';
 
 @Controller({ path: 'users' })
 export class UserController {
@@ -27,13 +34,16 @@ export class UserController {
     @Inject(UsersService) private readonly userServices: UsersService,
     @Inject(AuthServices) private readonly authServices: AuthServices,
   ) {}
+
   // make sure to hash the password before using the findOne methode
   /**
    * @desc get all users
    * @route GET /users
-   * @access Private
+   * @access public
    */
   @Get()
+  @UseGuards(JWTAuthGuard, RolesGuard)
+  @UserRolesDecorator(userRoles.admin)
   async getAllusers() {
     try {
       const users = await this.userServices.findAll(); //>
@@ -51,7 +61,13 @@ export class UserController {
     }
   }
 
+  /**
+   * @desc ccreate a user
+   * @route POST /users
+   * @access private
+   */
   @Post()
+  // @UserRolesDecorator(userRoles.user)
   async create(@Body() body: createUserDto) {
     try {
       // checking for duplication
@@ -100,6 +116,11 @@ export class UserController {
     }
   }
 
+  /**
+   * @desc Update user info
+   * @route PATCH /users/:id
+   * @access private
+   */
   @Patch(':id')
   async update(
     @Param('id', ParseIntPipe) id: number,
@@ -142,7 +163,13 @@ export class UserController {
     }
   }
 
+  /**
+   * @desc Delete a  user
+   * @route DELETE /users/:id
+   * @access Private
+   */
   @Delete(':id')
+  // @UserRolesDecorator(userRoles.admin)
   async delete(@Param('id', ParseIntPipe) id: number) {
     try {
       const user = await this.userServices.findOne({ id });
@@ -157,6 +184,11 @@ export class UserController {
     }
   }
 
+  /**
+   * @desc to authenticate  a user
+   * @route POST /users/login
+   * @access public
+   */
   @Post('login')
   async login(@Body() body: SignInDto) {
     return await this.userServices.login(body);

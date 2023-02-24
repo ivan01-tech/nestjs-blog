@@ -5,12 +5,14 @@ import { UserInterface } from './../models/userType';
 import { createUserDto } from './../dto/userDto.dto';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
+
 import {
   Inject,
   Injectable,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
+
 import { UserEntity } from 'src/user/models/user.entity';
 import { SignInDto } from 'src/user/dto/signInDto';
 
@@ -30,6 +32,11 @@ export class UsersService {
     return this.userRepository.find();
   }
 
+  /**
+   * to find a single user with some creteria
+   * @param creteria
+   * @returns
+   */
   async findOne(creteria: UpdateUserDto) {
     return this.userRepository.findOneBy(creteria);
   }
@@ -47,6 +54,11 @@ export class UsersService {
     return this.userRepository.delete(id);
   }
 
+  /**
+   *  a function to authenticate the user , once he is registerd
+   * @param user
+   * @returns
+   */
   login = async (user: SignInDto) => {
     try {
       const validate = await this.validate(user.email, user.password);
@@ -66,6 +78,12 @@ export class UsersService {
     }
   };
 
+  /**
+   * To check user email and password before starting hashing the value
+   * @param email
+   * @param password
+   * @returns
+   */
   async validate(email: string, password: string) {
     const user = await this.userRepository.findOneBy({ email });
 

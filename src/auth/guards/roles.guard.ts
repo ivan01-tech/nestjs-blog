@@ -6,14 +6,16 @@ import { matchRoles } from 'src/utils/matchRoles';
 @Injectable()
 export class RolesGuard implements CanActivate {
   constructor(private reflector: Reflector) {}
-
   canActivate(context: ExecutionContext): boolean {
-    const roles = this.reflector.get<string[]>('roles', context.getHandler());
-
+    const roles = this.reflector.get<UserRoles[]>(
+      'roles',
+      context.getHandler(),
+    );
+    console.log('RolesGuards : ');
+    console.log(roles);
     if (!roles) {
       return true;
     }
-    console.log(roles);
     const request = context.switchToHttp().getRequest();
 
     const user = request.user;

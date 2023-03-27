@@ -21,12 +21,14 @@ export class UserEntity {
 
   @Column()
   password: string;
+
   @Column({ unique: true })
   email: string;
 
   @Column({
-    array: true,
-    default: ['user'],
+    type: 'enum',
+    enum: UserRoles,
+    default: UserRoles.user,
   })
-  roles: string[];
+  roles: UserRoles;
 }

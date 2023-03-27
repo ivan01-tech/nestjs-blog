@@ -24,11 +24,9 @@ import {
 
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { JWTAuthGuard } from 'src/auth/guards/JwtGuards.guard';
-import { hasRoles } from 'src/user/decorators/user.decorator';
+import { hasRoles } from 'src/user/decorators/roles.decorator';
 
 @Controller({ path: 'users' })
-// @hasRoles(UserRoles.admin, UserRoles.editor)
-// @UseGuards(JWTAuthGuard, RolesGuard)
 export class UserController {
   constructor(
     @Inject(UsersService) private readonly userServices: UsersService,
@@ -39,9 +37,12 @@ export class UserController {
   /**
    * @desc get all users
    * @route GET /users
-   * @access public
+   * @access private
    */
+  // TODO
   @Get()
+  @hasRoles(UserRoles.admin, UserRoles.editor)
+  @UseGuards(JWTAuthGuard, RolesGuard)
   async getAllusers() {
     try {
       const users = await this.userServices.findAll(); //>
@@ -65,6 +66,8 @@ export class UserController {
    * @access private
    */
   @Post()
+  @hasRoles(UserRoles.admin, UserRoles.editor)
+  @UseGuards(JWTAuthGuard, RolesGuard)
   // @UserRolesDecorator(userRoles.user)
   async create(@Body() body: createUserDto) {
     try {
@@ -120,6 +123,8 @@ export class UserController {
    * @access private
    */
   @Patch(':id')
+  @hasRoles(UserRoles.admin, UserRoles.editor)
+  @UseGuards(JWTAuthGuard, RolesGuard)
   async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() userOpt: UpdateUserDto,
@@ -167,7 +172,8 @@ export class UserController {
    * @access Private
    */
   @Delete(':id')
-  // @UserRolesDecorator(userRoles.admin)
+  @hasRoles(UserRoles.admin)
+  @UseGuards(JWTAuthGuard, RolesGuard)
   async delete(@Param('id', ParseIntPipe) id: number) {
     try {
       const user = await this.userServices.findOne({ id });

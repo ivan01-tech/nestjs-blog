@@ -6,7 +6,7 @@ class ArticleEntity {
   @PrimaryGeneratedColumn('increment')
   id: number;
 
-  @Column({ type: 'string', length: 100 })
+  @Column({ type: 'varchar' })
   title: string;
 
   @Column('text')
@@ -15,7 +15,7 @@ class ArticleEntity {
   @Column({ type: 'date' })
   createdAt: Date;
 
-  @Column()
+  // @Column()
   @ManyToOne(() => UserEntity, (author) => author.articles)
   author: UserEntity;
 }

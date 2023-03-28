@@ -26,7 +26,7 @@ export class UserEntity {
     console.log(Object.values(UserRoles));
   }
 
-  @Column({ type: 'string', length: 8 })
+  @Column({ type: 'varchar', length: 8 })
   password: string;
 
   @Column({ unique: true })
@@ -40,7 +40,6 @@ export class UserEntity {
   })
   roles: UserRoles[];
 
-  @Column()
   @OneToMany(() => ArticleEntity, (article) => article.author)
-  articles: [ArticleEntity];
+  articles: ArticleEntity[];
 }

@@ -1,3 +1,4 @@
+import { checkIfUserExistGuard } from './articles/guards/checkIfUserExistGuard.guard';
 import ArticleEntity from 'src/articles/entity/articles.entity';
 import { JwtService } from '@nestjs/jwt';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
@@ -11,6 +12,7 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { APP_FILTER } from '@nestjs/core';
 import AllExceptionFilter from 'src/utils/all-exception.filter';
+import ArticlesModule from 'src/articles/articles.module';
 
 @Module({
   imports: [
@@ -29,6 +31,7 @@ import AllExceptionFilter from 'src/utils/all-exception.filter';
     }),
     UsersModule,
     AuthModule,
+    ArticlesModule,
   ],
   controllers: [AppController],
   providers: [
@@ -40,6 +43,7 @@ import AllExceptionFilter from 'src/utils/all-exception.filter';
     AppService,
     JwtService,
     RolesGuard,
+    checkIfUserExistGuard,
   ],
 })
 export class AppModule {}

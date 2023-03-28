@@ -19,12 +19,12 @@ import {
   ParseIntPipe,
   Patch,
   Post,
-  UseGuards,
+  // UseGuards,
 } from '@nestjs/common';
 
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { JWTAuthGuard } from 'src/auth/guards/JwtGuards.guard';
-import { hasRoles } from 'src/user/decorators/roles.decorator';
+// import { hasRoles } from 'src/user/decorators/roles.decorator';
 
 @Controller({ path: 'users' })
 export class UserController {
@@ -41,8 +41,8 @@ export class UserController {
    */
   // TODO
   @Get()
-  @hasRoles(UserRoles.admin, UserRoles.editor)
-  @UseGuards(JWTAuthGuard, RolesGuard)
+  // @hasRoles(UserRoles.admin, UserRoles.editor)
+  // @UseGuards(JWTAuthGuard, RolesGuard)
   async getAllusers() {
     try {
       const users = await this.userServices.findAll(); //>
@@ -66,8 +66,8 @@ export class UserController {
    * @access private
    */
   @Post()
-  @hasRoles(UserRoles.admin, UserRoles.editor)
-  @UseGuards(JWTAuthGuard, RolesGuard)
+  // @hasRoles(UserRoles.admin, UserRoles.editor)
+  // @UseGuards(JWTAuthGuard, RolesGuard)
   // @UserRolesDecorator(userRoles.user)
   async create(@Body() body: createUserDto) {
     try {
@@ -123,8 +123,8 @@ export class UserController {
    * @access private
    */
   @Patch(':id')
-  @hasRoles(UserRoles.admin, UserRoles.editor)
-  @UseGuards(JWTAuthGuard, RolesGuard)
+  // @hasRoles(UserRoles.admin, UserRoles.editor)
+  // @UseGuards(JWTAuthGuard, RolesGuard)
   async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() userOpt: UpdateUserDto,
@@ -172,8 +172,8 @@ export class UserController {
    * @access Private
    */
   @Delete(':id')
-  @hasRoles(UserRoles.admin)
-  @UseGuards(JWTAuthGuard, RolesGuard)
+  // @hasRoles(UserRoles.admin)
+  // @UseGuards(JWTAuthGuard, RolesGuard)
   async delete(@Param('id', ParseIntPipe) id: number) {
     try {
       const user = await this.userServices.findOne({ id });

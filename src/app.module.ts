@@ -1,3 +1,4 @@
+import ArticleEntity from 'src/articles/entity/articles.entity';
 import { JwtService } from '@nestjs/jwt';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { AuthModule } from './auth/auth.module';
@@ -23,7 +24,7 @@ import AllExceptionFilter from 'src/utils/all-exception.filter';
       password: 'adminblog123',
       database: 'nest_blog_db',
       host: 'localhost',
-      entities: [UserEntity],
+      entities: [UserEntity, ArticleEntity],
       synchronize: true,
     }),
     UsersModule,

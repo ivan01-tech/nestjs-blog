@@ -13,6 +13,7 @@ async function bootstrap() {
   // append the error middleware
   // TODO delete one here
   app.use(errorMiddleware);
+
   // register the error logger glabally
   app.useGlobalFilters(new AllExceptionFilter());
 

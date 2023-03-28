@@ -1,5 +1,5 @@
 import { ErrrorFilter } from './../../utils/errorFilter';
-import { SignInDto } from 'src/user/dto/signInDto';
+import { SignInDto } from 'src/user/dto/signInDto.dto';
 import { UserEntity } from 'src/user/models/user.entity';
 import { JwtService } from '@nestjs/jwt';
 import { UserInterface } from './../../user/models/userType';
